@@ -3,7 +3,7 @@ import {
   chooseComputerCard,
   chooseBestSuit,
   computerMove
-} from "./game/ai-final.js";
+} from "./src/game/ai-final.js";
 
 const output = document.getElementById("output");
 const runTestButton = document.getElementById("runAITestButton");
