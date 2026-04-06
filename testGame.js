@@ -7,7 +7,7 @@ import {
   playCard,
   checkWinner,
   switchTurn
-} from "./game/gameEngine.js";
+} from "./src/game/gameEngine.js";
 
 const output = document.getElementById("output");
 const runTestButton = document.getElementById("runTestButton");
