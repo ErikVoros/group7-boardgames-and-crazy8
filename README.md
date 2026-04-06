@@ -20,3 +20,7 @@ Use a local server to run the project.
 
 Example:
 python -m http.server 8000
+
+or
+
+https://erikvoros.github.io/group7-boardgames-and-crazy8/
