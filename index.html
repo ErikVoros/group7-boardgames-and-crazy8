@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Group 7 Boardgames and Crazy 8</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: #f9fafb;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #d1d5db;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 16px;
+      background: #f59e0b;
+      color: #111827;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      background: #fbbf24;
+    }
+
+    .small {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Group 7 Boardgames and Crazy 8</h1>
+    <p>
+      Skupni projekt za Unit 7, ki združuje frontend za izposojo družabnih iger
+      in logiko igre Crazy 8 proti računalniku.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Izposoja družabnih iger</h2>
+        <p>Frontend del projekta od Student 1.</p>
+        <a class="btn" href="src/app/student1-frontend.html">Odpri frontend</a>
+      </div>
+
+      <div class="card">
+        <h2>Crazy 8 test</h2>
+        <p>Osnovni test logike igre od Student 3.</p>
+        <a class="btn" href="tests/student3-test.html">Odpri test</a>
+      </div>
+
+      <div class="card">
+        <h2>Crazy 8 AI test</h2>
+        <p>Test AI potez računalnika.</p>
+        <a class="btn" href="tests/student3-ai-test.html">Odpri AI test</a>
+      </div>
+    </div>
+
+    <p class="small">
+      Opomba: projekt zaženi preko lokalnega serverja, ne samo z dvojnim klikom.
+    </p>
+  </div>
+</body>
+</html>
