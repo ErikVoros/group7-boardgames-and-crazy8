@@ -32,7 +32,7 @@
       output.textContent = "Button clicked.\n";
 
       try {
-        const ai = await import("./game/ai-final.js?v=" + Date.now());
+        const ai = await import("../src/game/ai-final.js?v=" + Date.now())
 
         writeLine("ai-final.js imported successfully.");
         writeLine("Exports: " + Object.keys(ai).join(", "));
