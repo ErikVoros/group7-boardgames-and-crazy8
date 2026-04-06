@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Izposoja Družabnih Iger</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --bg: #1a1008;
+      --bg2: #241810;
+      --bg3: #2e2010;
+      --card: #2a1c0e;
+      --card-hover: #352314;
+      --accent: #c8860a;
+      --accent2: #e8a020;
+      --accent-light: #f0b84a;
+      --text: #f5ead8;
+      --text-muted: #b89a72;
+      --text-dim: #7a6040;
+      --border: #3d2a14;
+      --border-light: #5a3e20;
+      --success: #4a8c4a;
+      --danger: #8c3030;
+      --tag-bg: #3d2010;
+      --shadow: 0 4px 24px rgba(0,0,0,0.5);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      background: rgba(26, 16, 8, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .navbar-brand:hover { color: var(--accent-light); }
+    .navbar-brand .icon { font-size: 1.5rem; }
+
+    .navbar-links { display: flex; gap: 0.5rem; align-items: center; }
+
+    .nav-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .nav-link:hover { color: var(--text); background: var(--bg3); }
+    .nav-link.active { color: var(--accent2); background: rgba(200, 134, 10, 0.12); }
+
+    .nav-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius-sm);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .nav-btn:hover { background: var(--accent2); transform: translateY(-1px); }
+
+    /* ===== HOME PAGE ===== */
+    .hero {
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 4rem 2rem;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 50%, rgba(200,134,10,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 30%, rgba(200,100,10,0.08) 0%, transparent 50%),
+        var(--bg);
+    }
+
+    .hero-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      background-image: repeating-linear-gradient(
+        45deg, var(--accent) 0, var(--accent) 1px, transparent 0, transparent 50%
+      );
+      background-size: 20px 20px;
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 680px; }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(200,134,10,0.15);
+      border: 1px solid rgba(200,134,10,0.3);
+      color: var(--accent2);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 span { color: var(--accent2); }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-sm);
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.04em;
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(200,134,10,0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-light);
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-sm);
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+
+    /* STATS */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 2.5rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent2);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* FEATURED SECTION */
+    .section { padding: 3.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .section-link {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      transition: color 0.2s;
+    }
+    .section-link:hover { color: var(--accent2); }
+
+    /* ===== GAME CARDS ===== */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .game-card:hover {
+      border-color: var(--accent);
+      background: var(--card-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,134,10,0.2);
+    }
+
+    .game-card-img {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--bg3) 0%, var(--bg2) 100%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .availability-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+    }
+    .available { background: rgba(74,140,74,0.2); color: #7dc87d; border: 1px solid rgba(74,140,74,0.4); }
+    .unavailable { background: rgba(140,48,48,0.2); color: #c87d7d; border: 1px solid rgba(140,48,48,0.4); }
+
+    .game-card-body { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
+
+    .game-category {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .game-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .game-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .game-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .game-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+    .game-price span { font-size: 0.75rem; font-weight: 400; color: var(--text-dim); }
+
+    .game-age {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      background: var(--tag-bg);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* ===== GAME LIST PAGE ===== */
+    .page-header {
+      padding: 3rem 2rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .page-subtitle { color: var(--text-muted); font-size: 1rem; }
+
+    .filters-bar {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 0.7rem 1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-dim); }
+
+    .filter-select {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 0.7rem 1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .filter-select:focus { border-color: var(--accent); }
+
+    .results-count { color: var(--text-dim); font-size: 0.9rem; }
+
+    .games-list-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 2rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ===== GAME DETAIL PAGE ===== */
+    .detail-back {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 1.5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: block;
+      transition: color 0.2s;
+    }
+    .detail-back:hover { color: var(--accent2); }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    @media (max-width: 800px) {
+      .detail-layout { grid-template-columns: 1fr; }
+    }
+
+    .detail-main {}
+
+    .detail-hero {
+      background: linear-gradient(135deg, var(--bg3) 0%, var(--bg2) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .detail-category {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .detail-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .detail-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .detail-specs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .spec-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+    }
+    .spec-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.3rem;
+    }
+    .spec-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .spec-value.accent { color: var(--accent2); }
+
+    /* RESERVATION FORM */
+    .res-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      position: sticky;
+      top: 80px;
+    }
+
+    .res-card-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 0.3rem;
+    }
+    .res-card-price span { font-size: 1rem; font-weight: 400; color: var(--text-dim); font-family: 'Lato', sans-serif; }
+    .res-card-avail { font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.04em;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 0.7rem 1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+
+    .form-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+    .price-breakdown { margin-bottom: 1.5rem; }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .price-row.total {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      border-top: 1px solid var(--border);
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .price-row.total .amount { color: var(--accent2); }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.04em;
+    }
+    .submit-btn:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,134,10,0.4); }
+    .submit-btn:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* SUCCESS MESSAGE */
+    .success-banner {
+      background: rgba(74,140,74,0.15);
+      border: 1px solid rgba(74,140,74,0.3);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      text-align: center;
+      color: #7dc87d;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    .footer strong { color: var(--accent); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-dim);
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state p { font-size: 1rem; }
+
+    /* HOW IT WORKS */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .how-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem 1.4rem;
+      text-align: center;
+    }
+    .how-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .how-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .how-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* ANIMATE */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.45s ease both; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ===== MOCK DATA (data model from class diagram) =====
+    const CATEGORIES = [
+      { categoryId: 1, name: "Strateške igre" },
+      { categoryId: 2, name: "Kartične igre" },
+      { categoryId: 3, name: "Družinske igre" },
+      { categoryId: 4, name: "Uganke" },
+      { categoryId: 5, name: "Pripovedne igre" },
+    ];
+
+    const GAMES = [
+      {
+        gameId: 1, title: "Catan", categoryId: 1,
+        description: "Klasična strateška igra, v kateri gradite naselja in trgovske poti na otoku Catan. Zbirajte surovine, trgujte z nasprotniki in si zagotovite zmago.",
+        ageRating: "10+", pricePerDay: 3.50, stockQuantity: 3,
+        availabilityStatus: "available", emoji: "🏝️"
+      },
+      {
+        gameId: 2, title: "Ticket to Ride", categoryId: 1,
+        description: "Potujte po Evropi in gradite železniške proge med mesti. Zberite karte, postavljajte vagone in dokončajte destinacijske karte pred tekmeci.",
+        ageRating: "8+", pricePerDay: 3.00, stockQuantity: 2,
+        availabilityStatus: "available", emoji: "🚂"
+      },
+      {
+        gameId: 3, title: "Crazy 8", categoryId: 2,
+        description: "Klasična kartična igra, kjer je cilj čim prej znebiti vseh kart iz roke. Osmica je čarobna karta, ki ti omogoča zamenjavo barve.",
+        ageRating: "6+", pricePerDay: 1.50, stockQuantity: 5,
+        availabilityStatus: "available", emoji: "🃏"
+      },
+      {
+        gameId: 4, title: "Pandemic", categoryId: 1,
+        description: "Sodelovalna igra, kjer skupaj z ekipo zdravnikov skušate ustaviti štiri epidemije, ki ogrožajo človeštvo po vsem svetu.",
+        ageRating: "8+", pricePerDay: 4.00, stockQuantity: 0,
+        availabilityStatus: "unavailable", emoji: "🧬"
+      },
+      {
+        gameId: 5, title: "Dixit", categoryId: 5,
+        description: "Igra domišljije z čudovitimi ilustracijami. Pripovedujte zgodbe, ugibajte in zberite čim več točk z ustvarjalnimi opisi kart.",
+        ageRating: "8+", pricePerDay: 2.50, stockQuantity: 2,
+        availabilityStatus: "available", emoji: "🎨"
+      },
+      {
+        gameId: 6, title: "Codenames", categoryId: 2,
+        description: "Besedna igra, kjer dve ekipi tekmujeta v ugibanju imen tajnih agentov. Vodje ekip dajejo enobesedne namige za odkrivanje pravih kart.",
+        ageRating: "14+", pricePerDay: 2.00, stockQuantity: 4,
+        availabilityStatus: "available", emoji: "🕵️"
+      },
+      {
+        gameId: 7, title: "Jenga", categoryId: 3,
+        description: "Napeta igra ravnotežja. Izmenjujte se pri odstranjevanju lesenih blokov iz stolpa in jih polagajte na vrh, ne da bi stolp porušili.",
+        ageRating: "6+", pricePerDay: 2.00, stockQuantity: 1,
+        availabilityStatus: "available", emoji: "🪵"
+      },
+      {
+        gameId: 8, title: "7 Wonders", categoryId: 1,
+        description: "Zgradite eno od sedmih čudes sveta skozi tri starosti civilizacije. Upravljajte surovine, vojsko in kulturni razvoj.",
+        ageRating: "10+", pricePerDay: 4.50, stockQuantity: 0,
+        availabilityStatus: "unavailable", emoji: "🏛️"
+      },
+      {
+        gameId: 9, title: "Blokus", categoryId: 3,
+        description: "Preprosta, a globoka strategija! Postavljajte barvne poliomino kose na ploščo. Vsak kos se sme dotikati samo kota vašega prejšnjega kosa.",
+        ageRating: "7+", pricePerDay: 2.00, stockQuantity: 3,
+        availabilityStatus: "available", emoji: "🔲"
+      },
+    ];
+
+    // ===== HELPER =====
+    const getCategoryName = (id) => CATEGORIES.find(c => c.categoryId === id)?.name || "Ostalo";
+
+    // ===== NAVBAR COMPONENT =====
+    function Navbar({ page, setPage }) {
+      return (
+        <nav className="navbar">
+          <div className="navbar-brand" onClick={() => setPage('home')}>
+            <span className="icon">🎲</span>
+            LudoIzposoja
+          </div>
+          <div className="navbar-links">
+            <button className={`nav-link ${page === 'home' ? 'active' : ''}`} onClick={() => setPage('home')}>Domov</button>
+            <button className={`nav-link ${page === 'list' ? 'active' : ''}`} onClick={() => setPage('list')}>Igre</button>
+            <button className="nav-btn" onClick={() => setPage('list')}>Izposodi si</button>
+          </div>
+        </nav>
+      );
+    }
+
+    // ===== HOME PAGE COMPONENT =====
+    function HomePage({ setPage, setSelectedGame }) {
+      const featured = GAMES.filter(g => g.availabilityStatus === 'available').slice(0, 4);
+
+      return (
+        <div className="fade-up">
+          {/* Hero */}
+          <div className="hero">
+            <div className="hero-bg" />
+            <div className="hero-pattern" />
+            <div className="hero-content">
+              <div className="hero-badge">✦ Izposoja Družabnih Iger ✦</div>
+              <h1>Skupaj za <span>nepozabno</span> igranje</h1>
+              <p>Izbirajte med desetinami priljubljenih iger. Enostavna spletna rezervacija, dostava ali prevzem. Za vse starosti in priložnosti.</p>
+              <div className="hero-actions">
+                <button className="btn-primary" onClick={() => setPage('list')}>Poišči igro 🔍</button>
+                <button className="btn-outline" onClick={() => setPage('list')}>Oglejte si ponudbo</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="stats-row">
+            <div className="stat">
+              <span className="stat-num">50+</span>
+              <span className="stat-label">Iger v ponudbi</span>
+            </div>
+            <div className="stat">
+              <span className="stat-num">1–5 €</span>
+              <span className="stat-label">Na dan</span>
+            </div>
+            <div className="stat">
+              <span className="stat-num">200+</span>
+              <span className="stat-label">Zadovoljnih strank</span>
+            </div>
+            <div className="stat">
+              <span className="stat-num">5★</span>
+              <span className="stat-label">Povprečna ocena</span>
+            </div>
+          </div>
+
+          {/* Featured Games */}
+          <div className="section">
+            <div className="section-header">
+              <h2 className="section-title">Priporočene igre</h2>
+              <button className="section-link" onClick={() => setPage('list')}>Vse igre →</button>
+            </div>
+            <div className="games-grid">
+              {featured.map(game => (
+                <GameCard key={game.gameId} game={game} onClick={() => { setSelectedGame(game); setPage('detail'); }} />
+              ))}
+            </div>
+          </div>
+
+          {/* How it works */}
+          <div className="section" style={{ borderTop: '1px solid var(--border)', paddingTop: '3rem' }}>
+            <div className="section-header">
+              <h2 className="section-title">Kako deluje?</h2>
+            </div>
+            <div className="how-grid">
+              {[
+                { icon: "🔍", title: "Poiščite igro", desc: "Preglejte ponudbo in filtrirajte po kategoriji, starosti ali ceni." },
+                { icon: "📅", title: "Rezervirajte", desc: "Izberite datume izposoje in izpolnite rezervacijski obrazec." },
+                { icon: "🎁", title: "Prevzamite", desc: "Prevzamite igro v naši poslovalnici ali jo naročite z dostavo." },
+                { icon: "🎲", title: "Uživajte!", desc: "Preživite nepozabno večer z igro in jo po izposoji vrnite." },
+              ].map((step, i) => (
+                <div key={i} className="how-card">
+                  <div className="how-icon">{step.icon}</div>
+                  <div className="how-title">{step.title}</div>
+                  <div className="how-desc">{step.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <footer className="footer">
+            <strong>LudoIzposoja</strong> — Spletna izposoja družabnih iger &nbsp;|&nbsp; Projektna naloga Unit 7 &nbsp;|&nbsp; Student 1: Nemanja Božić
+          </footer>
+        </div>
+      );
+    }
+
+    // ===== GAME CARD COMPONENT =====
+    function GameCard({ game, onClick }) {
+      return (
+        <div className="game-card" onClick={onClick}>
+          <div className="game-card-img">
+            <span>{game.emoji}</span>
+            <span className={`availability-badge ${game.availabilityStatus}`}>
+              {game.availabilityStatus === 'available' ? 'Na voljo' : 'Ni na voljo'}
+            </span>
+          </div>
+          <div className="game-card-body">
+            <div className="game-category">{getCategoryName(game.categoryId)}</div>
+            <div className="game-title">{game.title}</div>
+            <div className="game-desc">{game.description}</div>
+            <div className="game-card-footer">
+              <div className="game-price">
+                {game.pricePerDay.toFixed(2)} € <span>/ dan</span>
+              </div>
+              <div className="game-age">👤 {game.ageRating}</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ===== GAME LIST PAGE COMPONENT =====
+    function GameListPage({ setPage, setSelectedGame }) {
+      const [search, setSearch] = useState('');
+      const [catFilter, setCatFilter] = useState('all');
+      const [availFilter, setAvailFilter] = useState('all');
+
+      const filtered = GAMES.filter(g => {
+        const matchSearch = g.title.toLowerCase().includes(search.toLowerCase()) ||
+                            g.description.toLowerCase().includes(search.toLowerCase());
+        const matchCat = catFilter === 'all' || g.categoryId === parseInt(catFilter);
+        const matchAvail = availFilter === 'all' || g.availabilityStatus === availFilter;
+        return matchSearch && matchCat && matchAvail;
+      });
+
+      return (
+        <div className="fade-up">
+          <div className="page-header">
+            <h1 className="page-title">Vse igre</h1>
+            <p className="page-subtitle">Izberite igro in jo rezervirajte za vaš naslednji večer</p>
+          </div>
+
+          <div className="filters-bar">
+            <input
+              className="search-input"
+              type="text"
+              placeholder="🔍  Iskanje igre..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <select className="filter-select" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+              <option value="all">Vse kategorije</option>
+              {CATEGORIES.map(c => (
+                <option key={c.categoryId} value={c.categoryId}>{c.name}</option>
+              ))}
+            </select>
+            <select className="filter-select" value={availFilter} onChange={e => setAvailFilter(e.target.value)}>
+              <option value="all">Vse igre</option>
+              <option value="available">Na voljo</option>
+              <option value="unavailable">Ni na voljo</option>
+            </select>
+            <span className="results-count">{filtered.length} iger</span>
+          </div>
+
+          {filtered.length === 0 ? (
+            <div className="empty-state">
+              <div className="icon">🎭</div>
+              <p>Nobena igra ne ustreza vašemu iskanju. Poskusite z drugimi filtri.</p>
+            </div>
+          ) : (
+            <div className="games-list-grid">
+              {filtered.map(game => (
+                <GameCard
+                  key={game.gameId}
+                  game={game}
+                  onClick={() => { setSelectedGame(game); setPage('detail'); }}
+                />
+              ))}
+            </div>
+          )}
+
+          <footer className="footer">
+            <strong>LudoIzposoja</strong> — Spletna izposoja družabnih iger &nbsp;|&nbsp; Projektna naloga Unit 7 &nbsp;|&nbsp; Student 1: Nemanja Božić
+          </footer>
+        </div>
+      );
+    }
+
+    // ===== GAME DETAIL PAGE COMPONENT =====
+    function GameDetailPage({ game, setPage }) {
+      const [startDate, setStartDate] = useState('');
+      const [endDate, setEndDate] = useState('');
+      const [name, setName] = useState('');
+      const [email, setEmail] = useState('');
+      const [phone, setPhone] = useState('');
+      const [submitted, setSubmitted] = useState(false);
+
+      const today = new Date().toISOString().split('T')[0];
+
+      const daysDiff = () => {
+        if (!startDate || !endDate) return 0;
+        const d1 = new Date(startDate), d2 = new Date(endDate);
+        const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+        return diff > 0 ? diff : 0;
+      };
+
+      const days = daysDiff();
+      const total = (days * game.pricePerDay).toFixed(2);
+      const canSubmit = game.availabilityStatus === 'available' && name && email && phone && days > 0 && !submitted;
+
+      const handleSubmit = () => {
+        if (canSubmit) setSubmitted(true);
+      };
+
+      return (
+        <div className="fade-up">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <button className="detail-back" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '1.5rem 2rem', fontFamily: 'Lato', fontSize: '0.9rem' }}
+              onClick={() => setPage('list')}>
+              ← Nazaj na seznam iger
+            </button>
+          </div>
+
+          <div className="detail-layout">
+            {/* LEFT */}
+            <div className="detail-main">
+              <div className="detail-hero">{game.emoji}</div>
+
+              <div className="detail-meta">
+                <span className="detail-category">{getCategoryName(game.categoryId)}</span>
+                <span className={`availability-badge ${game.availabilityStatus}`}>
+                  {game.availabilityStatus === 'available' ? '● Na voljo' : '● Ni na voljo'}
+                </span>
+              </div>
+
+              <h1 className="detail-title">{game.title}</h1>
+              <p className="detail-desc">{game.description}</p>
+
+              <div className="detail-specs">
+                <div className="spec-item">
+                  <div className="spec-label">Cena na dan</div>
+                  <div className="spec-value accent">{game.pricePerDay.toFixed(2)} €</div>
+                </div>
+                <div className="spec-item">
+                  <div className="spec-label">Starostna meja</div>
+                  <div className="spec-value">{game.ageRating}</div>
+                </div>
+                <div className="spec-item">
+                  <div className="spec-label">Na zalogi</div>
+                  <div className="spec-value">{game.stockQuantity} kos{game.stockQuantity !== 1 ? 'ov' : ''}</div>
+                </div>
+                <div className="spec-item">
+                  <div className="spec-label">Kategorija</div>
+                  <div className="spec-value">{getCategoryName(game.categoryId)}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT: Reservation Form */}
+            <div>
+              <div className="res-card">
+                <div className="res-card-price">
+                  {game.pricePerDay.toFixed(2)} € <span>/ dan</span>
+                </div>
+                <div className="res-card-avail">
+                  <span className={game.availabilityStatus === 'available' ? 'available' : 'unavailable'}>
+                    {game.availabilityStatus === 'available' ? '✓ Na voljo' : '✗ Trenutno ni na voljo'}
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Datum začetka izposoje</label>
+                  <input className="form-input" type="date" min={today} value={startDate} onChange={e => setStartDate(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Datum vrnitve</label>
+                  <input className="form-input" type="date" min={startDate || today} value={endDate} onChange={e => setEndDate(e.target.value)} />
+                </div>
+
+                <hr className="form-divider" />
+
+                <div className="form-group">
+                  <label className="form-label">Ime in priimek</label>
+                  <input className="form-input" type="text" placeholder="Npr. Ana Novak" value={name} onChange={e => setName(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">E-poštni naslov</label>
+                  <input className="form-input" type="email" placeholder="ime@primer.si" value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Telefonska številka</label>
+                  <input className="form-input" type="tel" placeholder="+386 31 000 000" value={phone} onChange={e => setPhone(e.target.value)} />
+                </div>
+
+                {days > 0 && (
+                  <>
+                    <hr className="form-divider" />
+                    <div className="price-breakdown">
+                      <div className="price-row">
+                        <span>{game.pricePerDay.toFixed(2)} € × {days} dan{days !== 1 ? 'i' : ''}</span>
+                        <span>{total} €</span>
+                      </div>
+                      <div className="price-row total">
+                        <span>Skupaj</span>
+                        <span className="amount">{total} €</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <button className="submit-btn" disabled={!canSubmit} onClick={handleSubmit}>
+                  {submitted ? '✓ Rezervacija oddana' : game.availabilityStatus !== 'available' ? 'Ni na voljo' : 'Rezerviraj igro'}
+                </button>
+
+                {submitted && (
+                  <div className="success-banner">
+                    ✓ Vaša rezervacija je bila uspešno oddana! Kmalu vas bomo kontaktirali.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <footer className="footer" style={{ marginTop: '2rem' }}>
+            <strong>LudoIzposoja</strong> — Spletna izposoja družabnih iger &nbsp;|&nbsp; Projektna naloga Unit 7 &nbsp;|&nbsp; Student 1: Nemanja Božić
+          </footer>
+        </div>
+      );
+    }
+
+    // ===== APP (Router) =====
+    function App() {
+      const [page, setPage] = useState('home');
+      const [selectedGame, setSelectedGame] = useState(null);
+
+      return (
+        <div>
+          <Navbar page={page} setPage={setPage} />
+          {page === 'home' && <HomePage setPage={setPage} setSelectedGame={setSelectedGame} />}
+          {page === 'list' && <GameListPage setPage={setPage} setSelectedGame={setSelectedGame} />}
+          {page === 'detail' && selectedGame && <GameDetailPage game={selectedGame} setPage={setPage} />}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
